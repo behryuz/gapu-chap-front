@@ -1,0 +1,50 @@
+.avatar {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  user-select: none;
+  color: var(--avatar-fg);
+  background: var(--avatar-bg);
+}
+
+.square {
+  border-radius: 30%;
+}
+
+.avatar[data-tone='0'] { --avatar-bg: #e0e7ff; --avatar-fg: #3730a3; }
+.avatar[data-tone='1'] { --avatar-bg: #dcfce7; --avatar-fg: #166534; }
+.avatar[data-tone='2'] { --avatar-bg: #fef3c7; --avatar-fg: #92400e; }
+.avatar[data-tone='3'] { --avatar-bg: #fce7f3; --avatar-fg: #9d174d; }
+.avatar[data-tone='4'] { --avatar-bg: #e0f2fe; --avatar-fg: #075985; }
+.avatar[data-tone='5'] { --avatar-bg: #f3e8ff; --avatar-fg: #6b21a8; }
+.avatar[data-tone='6'] { --avatar-bg: #ffedd5; --avatar-fg: #9a3412; }
+.avatar[data-tone='7'] { --avatar-bg: #ccfbf1; --avatar-fg: #115e59; }
+
+@media (prefers-color-scheme: dark) {
+  .avatar {
+    background: color-mix(in srgb, var(--avatar-fg) 60%, #0b1020);
+    color: #f8fafc;
+  }
+}
+
+.status {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 30%;
+  height: 30%;
+  min-width: 9px;
+  min-height: 9px;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--text-subtle);
+}
+
+.online {
+  background: var(--success);
+}

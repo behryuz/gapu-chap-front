@@ -1,0 +1,103 @@
+import type { QueryClient } from '@tanstack/react-query';
+
+import { addMessageToCache, mapMessage, messageKeys } from '@/entities/message';
+import {
+  applyMemberRead,
+  applyOwnRead,
+  forgetRoom,
+  getRoomTitle,
+  incrementUnread,
+  roomKeys,
+} from '@/entities/room';
+import type { Member, UserRoom } from '@/entities/room';
+import { onlineActions } from '@/entities/user';
+import type { ServerEvent } from '@/shared/api';
+import { getErrorMessage } from '@/shared/api';
+import { toast } from '@/shared/ui';
+
+import type { TypedServerEvent } from './events';
+
+export interface EventContext {
+  queryClient: QueryClient;
+  viewerId: number | undefined;
+  currentRoomId: number | null;
+  goHome: () => void;
+}
+
+/**
+ * Единственное место, где события WebSocket превращаются в изменения состояния.
+ * Каждая сущность даёт свои «точечные» функции обновления кеша, а здесь их связывают.
+ */
+export function handleServerEvent(raw: ServerEvent, ctx: EventContext): void {
+  const event = raw as TypedServerEvent;
+  const { queryClient, viewerId } = ctx;
+
+  switch (event.type) {
+    case 'message.new': {
+      const message = mapMessage(event.payload);
+      addMessageToCache(queryClient, message);
+      if (message.author.id !== viewerId) {
+        incrementUnread(queryClient, message.roomId);
+      }
+      // Пишет тот, кого нет в списке участников, — значит, он только что вступил.
+      const members = queryClient.getQueryData<Member[]>(roomKeys.members(message.roomId));
+      if (members && !members.some((m) => m.userId === message.author.id)) {
+        void queryClient.invalidateQueries({ queryKey: roomKeys.members(message.roomId) });
+      }
+      break;
+    }
+
+    case 'message.read': {
+      const { room_id: roomId, user_id: userId, message_id: messageId } = event.payload;
+      applyMemberRead(queryClient, roomId, userId, messageId);
+      if (userId === viewerId) {
+        // Прочитали в другой вкладке — синхронизируем счётчик и здесь.
+        applyOwnRead(queryClient, roomId, messageId);
+      }
+      break;
+    }
+
+    case 'presence': {
+      const { user_id: id, username, online } = event.payload;
+      onlineActions.setPresence({ id, username }, online);
+      break;
+    }
+
+    case 'room.joined': {
+      // Нас добавили в комнату: вступили с другой вкладки или кто-то открыл с нами диалог.
+      // Сервер уже подписал это соединение — осталось обновить список.
+      void queryClient.invalidateQueries({ queryKey: roomKeys.mine() });
+      void queryClient.invalidateQueries({ queryKey: roomKeys.members(event.payload.room_id) });
+      break;
+    }
+
+    case 'room.left':
+    case 'room.deleted': {
+      const roomId = event.payload.room_id;
+      const room = queryClient
+        .getQueryData<UserRoom[]>(roomKeys.mine())
+        ?.find((r) => r.id === roomId);
+
+      forgetRoom(queryClient, roomId);
+      if (event.type === 'room.deleted') {
+        queryClient.removeQueries({ queryKey: roomKeys.detail(roomId) });
+        queryClient.removeQueries({ queryKey: messageKeys.room(roomId) });
+        // Владелец удалил сам — он уже видел своё подтверждение.
+        if (room && room.ownerId !== viewerId) {
+          toast.info(`Комната «${getRoomTitle(room)}» удалена создателем`);
+        }
+      }
+      if (ctx.currentRoomId === roomId) {
+        ctx.goHome();
+      }
+      break;
+    }
+
+    case 'error':
+      toast.error(getErrorMessage(event.payload.message));
+      break;
+
+    case 'room.subscribed':
+      break;
+  }
+}

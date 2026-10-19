@@ -1,0 +1,120 @@
+:root {
+  color-scheme: light;
+
+  --bg: #f4f5f9;
+  --surface: #ffffff;
+  --surface-2: #f1f3f8;
+  --surface-3: #e6e9f1;
+  --surface-glass: rgb(255 255 255 / 0.85);
+  --chat-bg: #eef1f7;
+  --border: #e2e6ef;
+
+  --text: #111827;
+  --text-muted: #4b5563;
+  --text-subtle: #8a93a5;
+
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft: rgb(79 70 229 / 0.12);
+  --accent-contrast: #ffffff;
+  --focus: #6366f1;
+
+  --danger: #dc2626;
+  --danger-soft: rgb(220 38 38 / 0.1);
+  --success: #16a34a;
+  --warning: #b45309;
+  --warning-soft: rgb(217 119 6 / 0.14);
+
+  --bubble-own: #4f46e5;
+  --bubble-own-text: #ffffff;
+  --bubble-other: #ffffff;
+  --receipt-read: #a5f3fc;
+  --highlight: rgb(250 204 21 / 0.45);
+  --flash: rgb(79 70 229 / 0.16);
+
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.08);
+  --shadow-lg: 0 12px 32px rgb(15 23 42 / 0.16);
+
+  --font:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --bg: #0b0f19;
+    --surface: #121826;
+    --surface-2: #1a2232;
+    --surface-3: #232d40;
+    --surface-glass: rgb(18 24 38 / 0.85);
+    --chat-bg: #0e1320;
+    --border: #232c3d;
+
+    --text: #e8ebf2;
+    --text-muted: #a3acbd;
+    --text-subtle: #6b7488;
+
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-soft: rgb(129 140 248 / 0.16);
+    --accent-contrast: #0b0f19;
+    --focus: #a5b4fc;
+
+    --danger: #f87171;
+    --danger-soft: rgb(248 113 113 / 0.14);
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --warning-soft: rgb(251 191 36 / 0.14);
+
+    --bubble-own: #4f46e5;
+    --bubble-own-text: #ffffff;
+    --bubble-other: #1a2232;
+    --receipt-read: #67e8f9;
+    --highlight: rgb(250 204 21 / 0.35);
+    --flash: rgb(129 140 248 / 0.22);
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--accent-soft);
+}

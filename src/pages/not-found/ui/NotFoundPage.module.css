@@ -1,0 +1,9 @@
+.page {
+  height: 100dvh;
+  background: var(--bg);
+}
+
+.link {
+  color: var(--accent);
+  font-weight: 600;
+}

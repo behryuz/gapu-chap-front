@@ -1,0 +1,75 @@
+.layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.layout[data-members='docked'] {
+  grid-template-columns: 320px minmax(0, 1fr) 300px;
+}
+
+.sidebar,
+.main,
+.members {
+  min-width: 0;
+  min-height: 0;
+}
+
+.main {
+  background: var(--chat-bg);
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  border: 0;
+  background: rgb(15 23 42 / 0.4);
+  cursor: pointer;
+}
+
+.layout[data-members='overlay'] .members {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 21;
+  width: min(320px, 88vw);
+  box-shadow: var(--shadow-lg);
+  animation: slide 0.18s ease-out;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 960px) {
+  .layout,
+  .layout[data-members='docked'] {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+}
+
+/* Телефон: либо список комнат, либо открытая комната. */
+@media (max-width: 768px) {
+  .layout,
+  .layout[data-members='docked'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .layout[data-room='open'] .sidebar,
+  .layout[data-room='none'] .main {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layout[data-members='overlay'] .members {
+    animation: none;
+  }
+}

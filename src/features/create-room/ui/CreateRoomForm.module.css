@@ -1,0 +1,9 @@
+.form {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.input {
+  flex: 1;
+}
